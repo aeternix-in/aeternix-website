@@ -420,10 +420,20 @@
         <p>Tell us who you are. We will write back to arrange a first conversation.</p>
         <p class="foot-mail"><a href="mailto:contact@aeternix.in">contact@aeternix.in</a></p>
       </div>
-      <form class="form" id="contact-form">
+      <form class="form" id="contact-form"
+            action="https://api.web3forms.com/submit"
+            method="POST">
+        <input type="hidden" name="access_key" value="3438f2f3-d119-46ab-9e59-8c8ee3d43fee">
+        <input type="hidden" name="subject" value="New Claims Audit Request — Aeternix">
+        <input type="hidden" name="from_name" value="Aeternix Website">
+        <input type="checkbox" name="botcheck" style="display:none">
         <div class="field">
           <label for="f-name">Name</label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
         </div>
         <div class="field">
           <label for="f-hospital">Hospital</label>

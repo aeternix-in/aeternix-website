@@ -643,19 +643,44 @@
   }
 
   /* =====================================================================
-     Request form. Opens the visitor's email app with the details filled in.
-     To receive submissions directly, connect a form service (see README).
+     Request form. Submits enquiries to Web3Forms without opening an email app.
      ===================================================================== */
 
   var form = document.getElementById('contact-form');
   var note = document.getElementById('form-note');
   if (form) {
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var v = function (name) { return (form.elements[name] && form.elements[name].value.trim()) || ''; };
-      var body = 'Name: ' + v('name') + '\nHospital: ' + v('hospital') + '\nRole: ' + v('role') + '\nPhone: ' + v('phone');
-      if (note) { note.textContent = 'Your email app should open with these details. If it does not, write to contact@aeternix.in.'; }
-      window.location.href = 'mailto:contact@aeternix.in?subject=' + encodeURIComponent('Claims audit request') + '&body=' + encodeURIComponent(body);
+
+      var button = form.querySelector('button[type="submit"]');
+      var originalButtonText = button ? button.textContent : '';
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Sending...';
+      }
+      if (note) { note.textContent = ''; }
+
+      try {
+        var response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form)
+        });
+        var result = await response.json();
+
+        if (response.ok && result.success) {
+          if (note) { note.textContent = 'Thank you. Your request has been submitted successfully. We will be in touch soon.'; }
+          form.reset();
+        } else {
+          throw new Error(result.message || 'Unable to submit your request. Please try again.');
+        }
+      } catch (error) {
+        if (note) { note.textContent = error.message || 'Something went wrong. Please try again or email contact@aeternix.in.'; }
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalButtonText;
+        }
+      }
     });
   }
 })();
